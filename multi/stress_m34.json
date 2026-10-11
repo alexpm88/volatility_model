@@ -1,0 +1,117 @@
+{
+ "baseline_vault_oos": {
+  "window": [
+   "2021-05-03",
+   "2026-09-22"
+  ],
+  "train_rows": 37156,
+  "test_rows": 11446,
+  "summary": {
+   "vol_skill": 0.033173751478301296,
+   "exp_bss": 0.08706018307095631,
+   "dir_bss": -0.0016806400647388364,
+   "best_net_sharpe": 0.026163270171623308,
+   "score": 0.1202339345492576
+  },
+  "gates": {
+   "vol_gana_a_HAR_en_>=2_de_3_horizontes": "True",
+   "expansion_vol_BSS>0_en_>=2_de_3": true,
+   "calibracion_ECE<0.03_en_exp_y_dir": false,
+   "direccion_BSS>0_en_>=2_de_4": true,
+   "backtest_neto_Sharpe>0_y_DSR>0.95_en_algun_h": false,
+   "placebo_no_rentable": false
+  }
+ },
+ "GFC-2008": {
+  "window": [
+   "2008-09-15",
+   "2009-03-31"
+  ],
+  "train_rows": 12377,
+  "test_rows": 959,
+  "summary": {
+   "vol_skill": -3.218985861104619,
+   "exp_bss": 0.3723590952789751,
+   "dir_bss": 0.02900975856871088,
+   "best_net_sharpe": 3.111974991233157,
+   "score": -2.846626765825644
+  },
+  "gates": {
+   "vol_gana_a_HAR_en_>=2_de_3_horizontes": "False",
+   "expansion_vol_BSS>0_en_>=2_de_3": true,
+   "calibracion_ECE<0.03_en_exp_y_dir": false,
+   "direccion_BSS>0_en_>=2_de_4": true,
+   "backtest_neto_Sharpe>0_y_DSR>0.95_en_algun_h": true,
+   "placebo_no_rentable": false
+  }
+ },
+ "Deuda-soberana": {
+  "window": [
+   "2010-05-06",
+   "2012-09-30"
+  ],
+  "train_rows": 15254,
+  "test_rows": 4249,
+  "summary": {
+   "vol_skill": 0.16112901163008653,
+   "exp_bss": 0.13895996912630748,
+   "dir_bss": -0.019436935723635307,
+   "best_net_sharpe": 1.2700704773505547,
+   "score": 0.300088980756394
+  },
+  "gates": {
+   "vol_gana_a_HAR_en_>=2_de_3_horizontes": "True",
+   "expansion_vol_BSS>0_en_>=2_de_3": true,
+   "calibracion_ECE<0.03_en_exp_y_dir": false,
+   "direccion_BSS>0_en_>=2_de_4": false,
+   "backtest_neto_Sharpe>0_y_DSR>0.95_en_algun_h": false,
+   "placebo_no_rentable": false
+  }
+ },
+ "COVID-2020": {
+  "window": [
+   "2020-02-19",
+   "2020-04-10"
+  ],
+  "train_rows": 34459,
+  "test_rows": 311,
+  "summary": {
+   "vol_skill": NaN,
+   "exp_bss": NaN,
+   "dir_bss": 0.07602690051355707,
+   "best_net_sharpe": 1.997618962000911,
+   "score": NaN
+  },
+  "gates": {
+   "vol_gana_a_HAR_en_>=2_de_3_horizontes": false,
+   "expansion_vol_BSS>0_en_>=2_de_3": false,
+   "calibracion_ECE<0.03_en_exp_y_dir": false,
+   "direccion_BSS>0_en_>=2_de_4": true,
+   "backtest_neto_Sharpe>0_y_DSR>0.95_en_algun_h": true,
+   "placebo_no_rentable": false
+  }
+ },
+ "Shocks-tasas-22": {
+  "window": [
+   "2022-03-16",
+   "2023-03-10"
+  ],
+  "train_rows": 38876,
+  "test_rows": 2096,
+  "summary": {
+   "vol_skill": 0.02251722408091032,
+   "exp_bss": 0.06559295666028175,
+   "dir_bss": 0.03364819082909107,
+   "best_net_sharpe": 0.7255099467243189,
+   "score": 0.08811018074119208
+  },
+  "gates": {
+   "vol_gana_a_HAR_en_>=2_de_3_horizontes": "True",
+   "expansion_vol_BSS>0_en_>=2_de_3": true,
+   "calibracion_ECE<0.03_en_exp_y_dir": false,
+   "direccion_BSS>0_en_>=2_de_4": true,
+   "backtest_neto_Sharpe>0_y_DSR>0.95_en_algun_h": true,
+   "placebo_no_rentable": false
+  }
+ }
+}

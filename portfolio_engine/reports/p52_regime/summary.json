@@ -1,0 +1,78 @@
+{
+ "config": {
+  "commission_bps": 5.0,
+  "slippage_bps": 0.0,
+  "regime_filter": true,
+  "regime_series": "SPY daily close",
+  "regime_window": 200,
+  "universe": "DEFAULT_UNIVERSE (25)"
+ },
+ "baseline": {
+  "base": {
+   "initial_capital": 100000.0,
+   "final_nav": 168814.5612023975,
+   "total_return": 0.6881456120239751,
+   "cagr": 0.1108698606661318,
+   "ann_vol": 0.08745206141893748,
+   "sharpe": 1.24722657984619,
+   "max_drawdown": -0.11245866880518851,
+   "calmar": 0.9858720705487899,
+   "total_dividends": 10854.840979197945,
+   "total_costs": 820.6730056958968,
+   "avg_daily_turnover": 0.009859927518297937,
+   "n_rebalances": 48,
+   "days": 1255,
+   "avg_positions": 15.98406374501992
+  },
+  "summary": {
+   "placebo_sharpe_mean": 1.0219121725515916,
+   "placebo_sharpe_p90": 1.0886839815095024,
+   "placebo_sharpe_max": 1.1049737680133003,
+   "sens_sharpe_mean": 1.1053729078813765,
+   "sens_sharpe_min": 0.8724523533479439,
+   "folds_sharpe_mean": 1.3703083673732408,
+   "folds_sharpe_min": 0.7158845613067164,
+   "n_backtests": 34
+  },
+  "gates": {
+   "folds_con_Sharpe>0_en_>=80%": true,
+   "estrategia_supera_percentil90_del_placebo": true,
+   "sensibilidad_Sharpe>0_en_>=90%_de_la_rejilla": true,
+   "ningun_fold_con_drawdown_peor_que_-25%": true
+  }
+ },
+ "filtered": {
+  "base": {
+   "initial_capital": 100000.0,
+   "final_nav": 157881.2776715824,
+   "total_return": 0.5788127767158238,
+   "cagr": 0.09603433378772275,
+   "ann_vol": 0.08589974052849367,
+   "sharpe": 1.111509584507797,
+   "max_drawdown": -0.12312593196230115,
+   "calmar": 0.7799683808048385,
+   "total_dividends": 9844.049718198214,
+   "total_costs": 715.4101746638651,
+   "avg_daily_turnover": 0.009100169964426424,
+   "n_rebalances": 40,
+   "days": 1255,
+   "avg_positions": 14.645418326693227
+  },
+  "summary": {
+   "placebo_sharpe_mean": 1.0499722222193293,
+   "placebo_sharpe_p90": 1.1342331052126502,
+   "placebo_sharpe_max": 1.1381169266821487,
+   "sens_sharpe_mean": 1.0120024418206377,
+   "sens_sharpe_min": 0.8294357367119672,
+   "folds_sharpe_mean": 1.0585010098859657,
+   "folds_sharpe_min": -0.34179583556787885,
+   "n_backtests": 34
+  },
+  "gates": {
+   "folds_con_Sharpe>0_en_>=80%": true,
+   "estrategia_supera_percentil90_del_placebo": false,
+   "sensibilidad_Sharpe>0_en_>=90%_de_la_rejilla": true,
+   "ningun_fold_con_drawdown_peor_que_-25%": true
+  }
+ }
+}

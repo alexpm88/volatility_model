@@ -1,0 +1,10 @@
+{
+ "decision": "RETIRE_regime_concept",
+ "baseline_sharpe": 1.24722657984619,
+ "best_sharpe": 1.2457669586009756,
+ "best_k": 1.8,
+ "baseline_gates": "4/4",
+ "best_gates": "4/4",
+ "note": "vol_spike best k=1.8 Sharpe=1.2458 gates=4/4; baseline Sharpe=1.2472 gates=4/4. ADOPT iff 4/4 AND >baseline -> RETIRE_regime_concept.",
+ "t_sec": 304.6
+}

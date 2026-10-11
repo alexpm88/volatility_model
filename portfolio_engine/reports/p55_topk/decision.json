@@ -1,0 +1,9 @@
+{
+ "decision": "ADOPT top_k=25",
+ "baseline_sharpe": 1.24722657984619,
+ "best_sharpe": 1.3104139635963492,
+ "best_topk": 25,
+ "best_gates": "4/4",
+ "note": "ADOPT top_k=25 (Sharpe 1.3104 > baseline 1.2472, 4/4 gates)",
+ "t_sec": 17874.7
+}

@@ -1,0 +1,16 @@
+{
+ "initial_capital": 100000.0,
+ "final_nav": 168814.5612023975,
+ "total_return": 0.6881456120239751,
+ "cagr": 0.1108698606661318,
+ "ann_vol": 0.08745206141893748,
+ "sharpe": 1.24722657984619,
+ "max_drawdown": -0.11245866880518851,
+ "calmar": 0.9858720705487899,
+ "total_dividends": 10854.840979197945,
+ "total_costs": 820.6730056958968,
+ "avg_daily_turnover": 0.009859927518297937,
+ "n_rebalances": 48,
+ "days": 1255,
+ "avg_positions": 15.98406374501992
+}

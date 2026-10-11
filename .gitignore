@@ -14,3 +14,10 @@ research/
 .DS_Store
 *.egg-info
 .eggs/
+
+# scratch / eval outputs (regenerable)
+data/
+*.log
+report_dev.json
+report_vault.json
+results*.tsv

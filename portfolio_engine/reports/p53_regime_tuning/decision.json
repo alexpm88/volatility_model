@@ -1,0 +1,5 @@
+{
+ "decision": "RETIRE_MA200",
+ "baseline_sharpe": 1.24722657984619,
+ "note": "MA cash filter is net-negative on this window; stays default-off (shippable V5.1+B2). Future: P5.4 vol-spike / sustained-bear trigger."
+}

@@ -1,0 +1,11 @@
+trial	score	vol_skill	exp_bss	dir_bss	best_net_sharpe	seconds	status	description
+1	0.06401	0.00620	0.05985	-0.00204	0.627	485	keep	baseline
+2	0.06401	0.00620	0.05985	-0.00204	0.089	495	discard	harness: guard neutralidad L/S
+3	0.06401	0.00620	0.05985	-0.00204	0.089	454	discard	auto: l2=0.0
+4	0.06401	0.00620	0.05985	-0.00204	0.089	669	discard	auto: max_depth=2
+4	0	0	0	0	0	0	crash	auto: lr=0.02 | ver run.log
+5	0	0	0	0	0	0	crash	auto: lr=0.08 | ver run.log
+7	0	0	0	0	0	0	crash	auto: calib=none | ver run.log
+6	0	0	0	0	0	0	crash	auto: max_depth=4 | ver run.log
+8	0	0	0	0	0	0	crash	auto: l2=5.0 | ver run.log
+10	0.06401	0.00620	0.05985	-0.00204	0.089	662	discard	auto: max_iter=350

@@ -1,0 +1,34 @@
+{
+ "base": {
+  "initial_capital": 100000.0,
+  "final_nav": 167788.96070946218,
+  "total_return": 0.6778896070946216,
+  "cagr": 0.10951140576686402,
+  "ann_vol": 0.0874647763643658,
+  "sharpe": 1.2330514895499614,
+  "max_drawdown": -0.11269775797881543,
+  "calmar": 0.9717265696399181,
+  "total_dividends": 10818.96892341283,
+  "total_costs": 1636.1803194425365,
+  "avg_daily_turnover": 0.009860648093482619,
+  "n_rebalances": 48,
+  "days": 1255,
+  "avg_positions": 15.98406374501992
+ },
+ "summary": {
+  "placebo_sharpe_mean": 0.99699416950002,
+  "placebo_sharpe_p90": 1.0639562547414325,
+  "placebo_sharpe_max": 1.0795032777945852,
+  "sens_sharpe_mean": 1.0867711218113432,
+  "sens_sharpe_min": 0.8518950231638653,
+  "folds_sharpe_mean": 1.3552781286134237,
+  "folds_sharpe_min": 0.7023244009509266,
+  "n_backtests": 34
+ },
+ "gates": {
+  "folds_con_Sharpe>0_en_>=80%": true,
+  "estrategia_supera_percentil90_del_placebo": true,
+  "sensibilidad_Sharpe>0_en_>=90%_de_la_rejilla": true,
+  "ningun_fold_con_drawdown_peor_que_-25%": true
+ }
+}

@@ -1,0 +1,9 @@
+sym,asset_class,cost_bps,start,end,n
+SPY,equity,5,1993-01-29,2026-09-21,8468
+QQQ,equity,5,1999-03-10,2026-09-21,6926
+GDX,equity_gold_miners,5,2006-05-22,2026-09-21,5115
+GLD,gold,5,2004-11-18,2026-09-21,5493
+GC=F,gold_futures,2,2000-08-30,2026-09-22,6540
+SLV,silver,5,2006-04-28,2026-09-21,5131
+SI=F,silver_futures,2,2000-08-30,2026-09-22,6541
+BTC-USD,crypto,10,2014-09-17,2026-09-22,4388
