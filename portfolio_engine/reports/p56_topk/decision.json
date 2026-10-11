@@ -1,0 +1,9 @@
+{
+ "decision": "ADOPT top_k=40",
+ "baseline_sharpe": 1.24722657984619,
+ "best_sharpe": 1.3434946219025878,
+ "best_topk": 40,
+ "best_gates": "4/4",
+ "note": "ADOPT top_k=40@40syms (Sharpe 1.3435 > baseline 1.2472, 4/4 gates) - seleccion REAL (top_k=20@40syms elige 20/40). p55 top_k=25@25syms 1.3104 -> top_k=25@40syms 1.1777.",
+ "t_sec": 306.8
+}

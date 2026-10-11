@@ -1,0 +1,16 @@
+# flaky mount / caches / scratch
+portfolio_engine/__pycache__/
+__pycache__/
+*.pyc
+*.pyo
+portfolio_engine/cache/
+portfolio_engine/cache/*.pkl
+# scratch / tmp (not part of repo)
+/tmp/
+cline_p56_*
+# heavy research notebooks (532M) - not part of engine
+research/
+# os cruft
+.DS_Store
+*.egg-info
+.eggs/
