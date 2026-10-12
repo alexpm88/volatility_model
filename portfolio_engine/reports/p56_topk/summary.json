@@ -46,12 +46,13 @@
   "top_k": 40,
   "univ": 40
  },
- "decision": "ADOPT top_k=40@40syms (Sharpe 1.3435 > baseline 1.2472, 4/4 gates) - seleccion REAL (top_k=20@40syms elige 20/40). p55 top_k=25@25syms 1.3104 -> top_k=25@40syms 1.1777.",
- "note": "ADOPT top_k=40@40syms (Sharpe 1.3435 > baseline 1.2472, 4/4 gates) - seleccion REAL (top_k=20@40syms elige 20/40). p55 top_k=25@25syms 1.3104 -> top_k=25@40syms 1.1777.",
+ "decision": "NO adoptar top_key=40 como DEFAULT. top_key=40@40syms = full-breadth (diversificacion, NO seleccion); ranking top-K neto negativo a escala (top_key=20@40syms seleccion REAL = 1.0615 < baseline 1.2472, 3/4 gates). DEFAULT shippable: V5.1+B2 top_key=20 INTACTO (1.2472/4/4). Full-breadth 1.3435/4/4 (folds_min +0.935) = OPT-IN P5.7b (kwarg top_key=40@40 / top_key=None en backtrader.py L29; aplicar solo tras recuperar backtrader.py + user sign-off; ver HANDOFF secciones 17-19). p55 top_key=25@25syms=1.3104 (degeneria 25=full-universe) -> top_key=25@40syms=1.1777 INVALIDA el ADOPT de P5.5 como skill-select.",
+ "note": "Veredicto P5.6 (CORRIGE seccion 16 P5.5): el gain de P5.5 (top_key=25) era degeneria 25@25 (full-universe), no skill: 1.3104@25syms vs 1.1777@40syms (delta -0.133). Seleccion REAL 20/40 = 1.0615 < 1.2472 (neto negativa a escala). Full-breadth 40/40 = 1.3435 (mejor, 4/4, folds_min +0.935) por diversificacion. Alpha del volatility SIGNAL (Engine A rough vol/HAR jumps), NO del ranking. DEFAULT V5.1+B2 top_key=20 intacto (conservador); full-breadth = opt-in P5.7b. Caveat placebo: p90 1.089->1.030 al pasar 25->40 syms; skill neto vs placebo 0.158->0.314.",
  "p55_ref": {
   "topk25_25s": 1.3104139635963492,
   "topk25_40s": 1.1776852564218645,
   "delta": 0.1327287071744847
  },
+ "reproducibility": "HISTORICO / NO REPRODUCIBLE desde el repo committed. Calculado contra backtrader.py ON-DRIVE en run 15:15 (P5.4: regime_trigger additive default-off, __init__ L29 top_key=20). backtrader.py NO esta git-tracked: inode /dev/nvme1n1p1p5 (ext4, errors=remount-ro) DEAD/degradada (stat/open/cp/getsize=ENOENT 24+min; watchdog cp 120s sin flap; 2x watchdogs 5-min=300x1s GIVEUP; sin /tmp backup, sin __pycache__/backtrader.*.pyc, sin /proc fd). El resto del motor (validation.py/signals.py/strategy.py/optimizer.py + reports/validation.json 1.2472/4/4 + cache universe_40_5y.pkl) SI versionado (master HEAD, 101 archivos). Reproducibilidad de 1.0615/1.1777/1.3435/1.2472 REQUIERE recuperar backtrader.py (HANDOFF seccion 19: cp -> git add -> commit --amend -> push --force tras fsck/reseat/restablecer).",
  "t_sec": 306.8
 }
