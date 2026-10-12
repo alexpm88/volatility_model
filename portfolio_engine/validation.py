@@ -51,7 +51,7 @@ class _PlaceboBT(PortfolioBacktester):
         names = [s for s in cross.index if np.isfinite(cross.loc[s, "rv63"])]
         if len(names) < 2:
             return pd.Series(dtype=float), float("nan"), 0.0
-        pick = list(self._rng.choice(names, size=min(self.top_k, len(names)), replace=False))
+        pick = list(self._rng.choice(names, size=(len(names) if self.top_k is None else min(self.top_k, len(names))), replace=False))   # P5.7: None => full-breadth (elige todos)
         rv = cross["rv63"].reindex(pick).dropna()
         w = compute_inverse_vol_weights(rv, max_weight=self.max_stock_weight)
         hist = self.df["lr"].unstack("symbol").loc[:date].tail(self.vol_lookback).reindex(columns=list(w.index))
