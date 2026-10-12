@@ -1,0 +1,18 @@
+{
+ "decision": "SUSPECT_OVERFIT",
+ "insample_5y_sharpe": 1.3435,
+ "insample_10y_sharpe": 0.8977297212142749,
+ "oos_avg_sharpe": 1.006995872344017,
+ "oos_min_sharpe": 0.71244202131299,
+ "gates_pass": "2/5",
+ "gates": {
+  "oos_sharpe_promedio_positivo": true,
+  "todos_los_folds_sharpe_positivo": true,
+  "ningun_fold_mdd_peor_que_-25pct": false,
+  "oos_supera_placebo_p90_en_todos_los_folds": false,
+  "oos_min_sharpe_supera_90pct_insample_5y": false
+ },
+ "note": "Holdout 3-fold OOS. In-sample 10y Sharpe 0.8977; OOS-avg 1.0070 (min 0.7124). Ref P5.6/P5.7: 1.3435 (5y). OVERFIT SUSPECTO: OOS degradado vs in-sample 5y.",
+ "candidate_default": "top_key=20 INTACTO (floor conservador)",
+ "t_sec": 123.8
+}

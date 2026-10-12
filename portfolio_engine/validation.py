@@ -95,10 +95,13 @@ def run_placebo(panel, seeds=10, **kw):
 def run_sensitivity(panel, top_ks=(10, 15, 20), vols=(0.08, 0.10, 0.12), freqs=(21, 42), **kw):
     """Robustez del Sharpe a los hiperparámetros de construcción de cartera."""
     out = []
+    # Filter out params we set explicitly to avoid duplicate kwargs
+    kw_filtered = {k: v for k, v in kw.items()
+                   if k not in ("top_k", "target_vol", "rebalance_freq")}
     for tk in top_ks:
         for tv in vols:
             for rf in freqs:
-                bt = PortfolioBacktester(panel, top_k=tk, target_vol=tv, rebalance_freq=rf, **kw)
+                bt = PortfolioBacktester(panel, top_k=tk, target_vol=tv, rebalance_freq=rf, **kw_filtered)
                 bt.run()
                 s = _stats(bt.history["nav"])
                 if s:

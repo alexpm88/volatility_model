@@ -30,7 +30,8 @@ class PortfolioBacktester:
                  rebalance_freq=21, target_vol=0.10, max_stock_weight=0.08,
                                                                     slippage_bps=0.0, max_leverage=1.0, vol_lookback=63, min_history=126,
                  regime_filter=False, regime_window=200, regime_series=None,
-                 regime_trigger="ma200", regime_k=1.5):
+                 regime_trigger="ma200", regime_k=1.5,
+                 regime_volume_series=None):
         self.raw_panel = panel
         self.initial_capital = float(initial_capital)
         self.commission_rate = (float(commission_bps) + float(slippage_bps)) / 10000.0
@@ -47,10 +48,12 @@ class PortfolioBacktester:
         self.regime_filter = bool(regime_filter)
         self.regime_window = int(regime_window)
         self._regime_close = regime_series
+        self._regime_volume = regime_volume_series
         self.regime_trigger = regime_trigger
         self.regime_k = float(regime_k)
         self._regime_ma = None
         self._regime_vol = None
+        self._regime_acc_dist = None  # P5.9: acc_dist regime mask
 
         # Precomputar features causales (todo rolling hacia atrás => sin look-ahead)
         print("[Backtester] Calculando señales multifactoriales causales...")
@@ -74,8 +77,27 @@ class PortfolioBacktester:
         """True si el filtro de régimen está activo y el mercado (regime_series, p.ej. SPY) está
         en régimen de riesgo => ir a efectivo (recortar beta). Causal (sólo info <= date).
         - trigger 'ma200' (P5.2): close < MA(regime_window).
-        - trigger 'vol_spike' (P5.4): rv21 > k·rv126 (spike de vol; libera cash al normalizarse)."""
-        if not self.regime_filter or self._regime_close is None:
+        - trigger 'vol_spike' (P5.4): rv21 > k·rv126 (spike de vol; libera cash al normalizarse).
+        - trigger 'acc_dist' (P5.9): distribución cuando price↓ + volume↑ (smart money out) => cash;
+          acumulación cuando price↑ + volume↑ (smart money in) => stay invested. Usa cross-sectional
+          median close/volume del panel como proxy de mercado (o regime_series/regime_volume_series)."""
+        if not self.regime_filter:
+            return False
+        # acc_dist trigger computes market proxy cross-sectionally (no _regime_close needed)
+        if self.regime_trigger == "acc_dist":
+            if self._regime_acc_dist is None:
+                mc = self._regime_close if self._regime_close is not None else \
+                    self.df["close"].groupby(level="date").median()
+                mv = self._regime_volume if self._regime_volume is not None else \
+                    self.df["volume"].groupby(level="date").median()
+                market_ma = mc.rolling(self.regime_window).mean()
+                vol_ma = mv.rolling(self.regime_window).mean()
+                vol_std = mv.rolling(self.regime_window).std()
+                # Distribution: price below MA (falling) + volume above avg+k*std (rising)
+                # => smart money distributing => bear regime (cash)
+                self._regime_acc_dist = (mc < market_ma) & (mv > vol_ma + self.regime_k * vol_std)
+            return bool(self._regime_acc_dist.get(date, False))
+        if self._regime_close is None:
             return False
         rc = self._regime_close
         if self._regime_ma is None and self._regime_vol is None:

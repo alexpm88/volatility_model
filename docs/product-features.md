@@ -71,3 +71,25 @@ Este documento compila el inventario exhaustivo de features, transformaciones es
 3. **Predicción de Dirección de Precio (`task="dir"`)**:
    - Clasificación de retornos futuros positivos vs negativos.
    - Métrica Objetivo: `dir_bss` y Sharpe neto tras costes transaccionales reales.
+
+---
+
+## 5. Volume-Price Accumulation/Distribution Regime (P5.9)
+
+### A. Features de Volumen (per-asset, causal)
+
+- **`lv` (Log Volume Change)**: $\ln(V_t / V_{t-1})$ — variación porcentual de volumen día a día. Shift(1) garantiza causalidad (no look-ahead).
+- **`volume_zscore_21`**: Z-score del volumen actual vs media/std de 21 dias. Detecta spikes de liquidez (> 1.5σ) o deshidratacion (< 0).
+- **`vol_price_corr_21`**: Correlacion rodante (21d, min 14) entre retornos y cambios de volumen. Positiva = tendencia confirmada; Negativa = divergence (price-up + vol-down = distribucion; price-down + vol-up = capitulacion).
+- **`acc_dist_score`**: Score de acumulacion/distribucion por activo: sign(lr) * sign(lv) * |lr| * max(0, vol_zscore_21). price-up+vol-up = acumulacion (positivo); price-down+vol-up = distribucion (negativo); sin confirmacion de volumen = ~0.
+
+### B. Trigger de Régimen de Mercado (`acc_dist`)
+
+En `backtester.py` `_in_bear_regime`, el trigger `acc_dist` detecta régimen de mercado usando el proxy cross-sectional (mediana del panel, o `regime_series`/`regime_volume_series` si se provee):
+- **Distribucion** (cash): precio < MA(regime_window) AND volumen > avg + k*std. (price-down + volume-up = smart money distribuyendo)
+- **Acumulacion** (stay invested): precio >= MA AND volumen > avg + k*std. (price-up + volume-up = smart money acumulando)
+- `regime_k` (default 1.5) = umbral de z-score de volumen para confirmar el régimen.
+
+### C. Integracion en el Composite Score
+
+`rank_and_select_top_k` incluye `acc_dist_score` como factor cross-seccional (peso 0.10; pesos existentes reducidos 10% proporcionalmente para acomodar). El score se valida como dropna requerido.

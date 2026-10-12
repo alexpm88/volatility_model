@@ -1,0 +1,85 @@
+{
+ "task": "P5.8 Full-breadth (top_key=None@40syms) holdout 3-fold OOS",
+ "config": {
+  "top_k": "None (full-breadth)",
+  "placebo_top_k": 20,
+  "target_vol": 0.1,
+  "rebalance_freq": 21,
+  "commission_bps": 5.0,
+  "regime_filter": false,
+  "n_folds": 3,
+  "train_days": 630,
+  "oos_days": 628
+ },
+ "data": {
+  "symbols": 40,
+  "date_range": "2016-10-10 -> 2026-10-09",
+  "n_dates": 2514
+ },
+ "in_sample_10y": {
+  "sharpe": 0.8977297212142749,
+  "cagr": 0.10081319487823404,
+  "mdd": -0.2613540219178325,
+  "placebo_p90": 1.0660989791826898
+ },
+ "p56_p57_ref": {
+  "sharpe_5y": 1.3435,
+  "source": "P5.6/P5.7 validate() 5y cache"
+ },
+ "o_os_folds": [
+  {
+   "days": 628,
+   "total_return": 0.2792005097820738,
+   "cagr": 0.10385410509356818,
+   "ann_vol": 0.15617645512958137,
+   "sharpe": 0.71244202131299,
+   "max_drawdown": -0.2613540219178325,
+   "oos_start": "2019-04-12",
+   "oos_end": "2021-10-07",
+   "fold": 1,
+   "placebo_p90": 0.7774183207086732,
+   "train_end": "2019-04-11"
+  },
+  {
+   "days": 628,
+   "total_return": 0.25465027702975385,
+   "cagr": 0.09530376707963129,
+   "ann_vol": 0.10076274145962504,
+   "sharpe": 0.9553614309078537,
+   "max_drawdown": -0.11239330920348767,
+   "oos_start": "2021-10-08",
+   "oos_end": "2024-04-09",
+   "fold": 2,
+   "placebo_p90": 1.1861386307872543,
+   "train_end": "2021-10-07"
+  },
+  {
+   "days": 628,
+   "total_return": 0.40078091011790784,
+   "cagr": 0.14481297956485628,
+   "ann_vol": 0.10412938505698259,
+   "sharpe": 1.3531841648112077,
+   "max_drawdown": -0.1272351397013669,
+   "oos_start": "2024-04-10",
+   "oos_end": "2026-10-09",
+   "fold": 3,
+   "placebo_p90": 1.5405150541177144,
+   "train_end": "2024-04-09"
+  }
+ ],
+ "o_os_summary": {
+  "avg_sharpe": 1.006995872344017,
+  "min_sharpe": 0.71244202131299,
+  "max_mdd": -0.2613540219178325
+ },
+ "gates": {
+  "oos_sharpe_promedio_positivo": true,
+  "todos_los_folds_sharpe_positivo": true,
+  "ningun_fold_mdd_peor_que_-25pct": false,
+  "oos_supera_placebo_p90_en_todos_los_folds": false,
+  "oos_min_sharpe_supera_90pct_insample_5y": false
+ },
+ "gates_pass": "2/5",
+ "decision": "SUSPECT_OVERFIT",
+ "t_sec": 123.8
+}

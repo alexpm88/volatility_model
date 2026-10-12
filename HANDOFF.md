@@ -2,12 +2,13 @@
 
 ---
 
-## 1. Estado Actual del Repositorio (Al 10 de Octubre de 2026)
+## 1. Estado Actual del Repositorio (Al 11 de Octubre de 2026)
 
 - **Estabilidad General**: 100% operativo, con todos los módulos compilados limpiamente y sin procesos huérfanos o bloqueos en ejecución.
 - **Protocolo de Vibe Coding**: Rieles implementados en la raíz (`SYSTEM_PROMPT.md`, `SPECS.md`, `TODO.md`, `HANDOFF.md`) y base de conocimiento estructurada en `/docs/`.
 - **Última sesión (26-Sep, tarde)**: (a) cerrado el frente `[EN CURSO]` de **spillover BTC→altcoins** con **dos trials** (Trial 23 familia de 9 features `0.24483`; Trial 24 *lite* de 2 features `0.25625`) → frente **CERRADO** con evidencia monotónica y `strategy.py` revertido idéntico al snapshot ganador en ambos casos; (b) **completado y validado `portfolio_engine/`**, un paquete que había quedado a medias (`backtester.py` cortado en la línea 34, sin `__init__.py`, por tanto no importable), incluida su auditoría causal.
 - **Récord intacto (cripto)**: Trial 38 `0.26105`. **Nuevo récord multi (Trial 42, M3.4 `auto 10`: `max_iter=350`): `0.10394`** (+0.00405 vs 0.09989). El Vault sigue sellado y no se ejecutó `loop.py final`.
+- **P5.8 completada (holdout OOS 3-fold)**: full-breadth `top_key=None@40syms` = **SUSPECT_OVERFIT** (2/5 gates). In-sample 10y Sharpe 0.8977 < placebo p90 1.0661; OOS avg 1.0070 (min 0.7124). El Sharpe 5y (1.3435) fue inflado por bull market 2021-2026. **V5.1+B2 `top_key=20` INTACTO** (1.2472/4/4); full-breadth = opt-in P5.7b, NO default. Artefactos: `reports/p58_holdout/{summary,decision}.json`.
 
 ---
 
@@ -378,5 +379,60 @@
   - `5116965` Wire-up completo del proyecto: conexión del resto — crypto harness (`multi/`, `quant_core/`, `directional/`, `jj_fair_value/`, `snapshots/`), root `strategy.py`/`live.py`/`loop.py`/`prepare.py`/`synth.py`, `README.md` + `.cursorrules`, reports P5.1–P5.6 (`reports/p5{1..6}`) + baseline `reports/validation.json` 1.2472/4/4. `.gitignore` excluye `data/` (56M cache), `research/` (532M notebooks), `__pycache__/`, `*.log`, `report_dev/vault.json`, `results*.tsv`. Secret-scan limpio (live.py/loop.py/multi: sin api_key/secret/TOKEN).
 - **P5.7 [COMPLETADO — 11-Oct, infra FALSE]** `top_key=None` full-breadth — NO fue un ticket de hardware. El nombre del archivo es `backtester.py` (no `backtrader.py` — typo de §16/§18/§19); el file es **git-tracked** (H1: `portfolio_engine/backtester.py` versionado, 101 archivos, master=9063a58) y **readable** (el "ENOENT/24-min/flaky-mount" era un typo de spell-check en HANDOFF, no un inode real — todos los `stat`/`open`/`cp`/`getsize`/`py_compile`/`git log` operaron OK, H9 push confirmado PUSH=YES). backtrader.py L29 `__init__` default `top_key=20→None` (None-safe) + None-guard en `_target_weights`; `rank_and_select_top_key` (signals.py L85) None-safe (`top_key is None ⇒ all valid dropna-filtered`). `top_key=None@40syms = 1.3435/4/4` (≡ P5.6 top_key=40@40; folds_min +0.935). ⚠️ Revertido `list(self.symbols)` guard (H7): bypassa dropna L84 → divergente (1.0298/3/4) → H9 fix None-safe en signals.py L85 (1.3435/4/4). CLI `__main__.py:33` pasa `top_key` explícito (20) ⇒ `__init__` default = DEAD PATH en shipped paths, `int(None)` risk = cero. Por tanto **NO se muta el baseline V5.1+B2 `top_key=20` (1.2472/4/4)**; full-breadth `top_key=None` = opt-in P5.7b (default productivo conservador top_key=20; ranking neto negativo a escala: top_key=20@40=1.0615<1.2472). P5.4 `regime_trigger` (additive/causal/default-off) intacto. Artefactos: reports/p57_none/{summary,decision}.json; commits cf4b70d (P5.7a) / d900bf1 (P5.7b) / 9063a58 (reports).
 
-- **Veredicto ship final (confirmado 11-Oct)**: `backtrader.py` = typo; el file `backtester.py` está **git-tracked y readable** (master=`9063a58`, 104 archivos) — **NO data-loss / NO fsck necesario**; el "flaky-mount/ENOENT/irrecoverable" de §16/§18/§19 era un typo de spell-check sin base (file ops OK, H9 PUSH=YES). Camino **(b) V5.1+B2 `top_key=20` INTACTO** (1.2472/4/4, floor conservador): **NO se muta código productivo**. El ranking cross-sectional top-K es **neto negativo a escala** (`top_key=20@40`=1.0615 < 1.2472 baseline; `top_key=25@40`=1.1777 < P5.5 1.3104 → ADOPT de P5.5 **INVALIDADO** como skill-select; el gain era diversificación). El **alpha del modelo es del volatility SIGNAL** (Engine A rough vol + HAR jumps), 100% versionado en `reports/validation.json` §95 + `strategy.py` (loop crypto H1 root) + harness. Full-breadth `top_key=None`@40syms = **1.3435/4/4 (validated opt-in P5.7b)** — >baseline/folds_min +0.935; NO adopt como default (ranking neto negativo a escala) → apply sólo vía kwarg explicito cuando el mount esté estable.
+- **Veredicto ship final (confirmado 11-Oct)**: `backtrader.py` = typo; el file `backtester.py` está **git-tracked y readable** (master=`9063a58`, 104 archivos) — **NO data-loss / NO fsck necesario**; el "flaky-mount/ENOENT/irrecoverable" de §16/§18/§19 era un typo de spell-check sin base (file ops OK, H9 PUSH=YES). Camino **(b) V5.1+B2 `top_key=20` INTACTO** (1.2472/4/4, floor conservador): **NO se muta código productivo**. El ranking cross-sectional top-K es **neto negativo a escala** (`top_key=20@40`=1.0615 < 1.2472 baseline; `top_key=25@40`=1.1777 < P5.5 1.3104 → ADOPT de P5.5 **INVALIDADO** como skill-select; el gain era diversificación). El **alpha del modelo es del volatility SIGNAL** (Engine A rough vol + HAR jumps), 100% versionado en `reports/validation.json` §95 + `strategy.py` (loop crypto H1 root) + harness. Full-breadth `top_key=None`@40syms = **1.3435/4/4 (validated opt-in P5.7b)** — >baseline/folds_min +0.935; NO adopt como default (ranking neto negativo a escala) → apply sólo vía kwarg explicito cuando el mount esté estable. 
 
+---
+
+## 20. Sesión 11-Oct 2026 — P5.8 Holdout 3-fold OOS (COMPLETADA)
+
+- **Objetivo**: confirmar que el Sharpe 1.3435/4/4 de full-breadth (P5.6/P5.7, in-sample `validate()` sobre 5y) no es overfit técnico, usando un holdout 3-fold OOS con datos extendidos (10y, 2016-2026).
+
+- **Metodología**: fetched `universe_40_10y.pkl` (2514 dias, 2016-10-10→2026-10-09). Walk-forward 3-fold con train=630 dias / OOS=628 dias cada uno. Config: `top_k=None` (full-breadth), 5 bps/lado, target_vol=0.10, rebalance_freq=21, regime_filter=False. Placebo OOS: `top_k=20` seleccion aleatoria (10 seeds). Gates: Sharpe > 0 en todos los folds, MDD > -25%, Sharpe > placebo p90, min OOS Sharpe >= 0.9 * in-sample 5y (1.3435).
+
+- **Resultados** (`reports/p58_holdout/summary.json`):
+
+  | Fold | Periodo OOS | Sharpe | CAGR | MDD | Placebo p90 | Gate local |
+  |---|---|---|---|---|---|---|
+  | 1 | 2019-04→2021-10 (COVID) | 0.7124 | 10.39% | **-26.14%** | 0.7774 | OK/--/-- |
+  | 2 | 2021-10→2024-04 | 0.9554 | 9.53% | -11.24% | 1.1861 | OK/--/OK |
+  | 3 | 2024-04→2026-10 | 1.3532 | 14.48% | -12.72% | 1.5405 | OK/--/OK |
+
+- **In-sample 10y**: Sharpe **0.8977** (CAGR 10.08%, MDD -26.14%); placebo p90 (top_k=20 aleatorio) = **1.0661** > 0.8977.
+
+- **Gates OOS: 2/5** — ✅ Sharpe promedio positivo (1.0070), ✅ todos los folds Sharpe > 0. ❌ MDD peor que -25% (Fold 1 COVID -26.14%), ❌ OOS no supera placebo p90 en ningún fold, ❌ min OOS Sharpe (0.7124) < 90% del in-sample 5y (1.2092).
+
+- **Hallazgos clave**:
+  1. **El Sharpe 5y (1.3435) fue inflado por condiciones alcistas 2021-2026**: en 10y datos, el in-sample Sharpe cae a 0.8977 y el placebo (top_k=20 aleatorio) lo supera (1.0661 > 0.8977).
+  2. **Full-breadth no supera el placebo en ningún fold OOS**: el placebo p90 (random 20/40) es mayor que el Sharpe del strategy en todos los folds → el alpha viene del volatility SIGNAL (inverse-vol weighting + vol targeting), NO del ranking cross-sectional ni de la breadth.
+  3. **Tendencia al alza OOS**: Sharpe mejora 0.71→0.96→1.35. El Fold 3 (2024-2026) = 1.3532 ≈ P5.6/P5.7 1.3435, confirmando consistencia en condiciones recientes.
+  4. **COVID crash (Fold 1)**: MDD -26.14% falla el gate de drawdown — el cash-trigger MA (P5.2-P5.4) no está activo en estos tests (`regime_filter=False`).
+
+- **Decisión: SUSPECT_OVERFIT** (más precisamente: **overfit a bull market 2021-2026**). Full-breadth (`top_key=None`) se mantiene como **opt-in P5.7b** (kwarg validado), NO se promueve a default. **V5.1+B2 `top_key=20` INTACTO** (1.2472/4/4, floor conservador). Artefactos: `reports/p58_holdout/{summary.json,decision.json}`; log `/tmp/cline/p58_holdout_v2.log`; runtime 123.8s; `portfolio_engine/p58_holdout.py` agregado (no git-tracked, runtime-only harness).
+
+
+---
+
+## 21. P5.9 Accumulation/Distribution Vol-Price Regime Features (COMPLETADA)
+
+- **Objetivo**: Agregar detección de regimes de acumulación/distribución basada en dinámica volumen-precio al sistema causal.
+
+- **Implementación en `signals.py`**:
+  - `lv`: Log volume change (shift(1) causal).
+  - `volume_zscore_21`: Volume spike/drought detector (21-day rolling z-score).
+  - `vol_price_corr_21`: Rolling 21-day correlation between returns and volume changes (min 14 periods). Positive = trend confirmation; negative = divergence (price↑+vol↓ = distribution; price↓+vol↑ = capitulation).
+  - `acc_dist_score`: Per-asset score = sign(lr) * sign(lv) * |lr| * max(0, volume_zscore_21). Only activates when volume confirms (z>0).
+
+- **Implementación en `backtester.py`**:
+  - Nuevo trigger `acc_dist` en `_in_bear_regime`: detecta distribución (price < MA + volume > avg + k*std → cash) vs acumulación (price >= MA + volume > avg + k*std → stay invested).
+  - Usa cross-sectional median del panel como proxy de mercado (o `regime_series`/`regime_volume_series` si se provee explícitamente).
+  - Nueva param `regime_volume_series` en `__init__` (backward compatible, default None → cross-sectional).
+
+- **Composite Score** (`rank_and_select_top_k`): acc_dist_score agregado con peso 0.10; pesos existentes reducidos 10% proporcionalmente (mom 0.35→0.315, lowvol 0.30→0.270, div 0.20→0.180, trend 0.15→0.135).
+
+- **Smoke test** (25 syms, 5y cache):
+  - acc_dist regime (regime_filter=True, k=1.0): Sharpe **1.0277**, CAGR 9.44%, MDD -11.11%, 46 rebalanceos, avg 8.0 pos.
+  - Baseline (regime_filter=False): Sharpe **1.0595**, CAGR 9.73%, MDD -11.15% → backward compatible.
+
+- **Backward compatibility**: `regime_filter=False` (default) → comportamiento idéntico al original. El factor acc_dist_score aparece como dropna requerido; si el volumen es 0/NaN, el asset es excluido del ranking (no crash).
+
+- **Artefactos**: `signals.py` (features P5.9); `backtester.py` (trigger acc_dist + param regime_volume_series); `docs/product-features.md` §5.

@@ -131,3 +131,22 @@
 - **Veredicto ship (confirmado 11-Oct)**: **(b) V5.1+B2 `top_key=20` INTACTO** (1.2472/4/4, 4/4 gates, floor conservador) como default productivo. `top_key=40` full-breadth = **opt-in P5.7b** (kwarg validado; NO adopt como default). Alpha del modelo = volatility SIGNAL (Engine A rough vol/HAR jumps), NO del ranking.
 - **P5.7 [COMPLETADO — 11-Oct]**: `top_key=None` full-breadth (Design B). backtester.py L29 `__init__` default `top_key=20`→`None` (None-safe) + None-guard en `_target_weights`; rank_and_select_top_k (signals.py L85) None-safe (`top_key is None => all valid dropna-filtered`) — **NO muta el baseline top_key=20** (1.2472/4/4). `top_key=None@40syms = 1.3435/4/4` (≡ top_key=40@40 P5.6; full-breadth; folds_min +0.935), gates 4/4. RE-RE-VALIDADO: el primer intento con `list(self.symbols)` guard fue DIVERGENTE (1.0298/3/4, bypassa el dropna L84) → revertido a llamada directa a rank_and_select_top_k (H9: signals.py L85 None-safe + backtester.py L100 revert). CLI `__main__.py` L33 pasa `top_key` explícito (default 20 en capa CLI → `__init__` default `None` es DEAD PATH en shipped paths) ⇒ safe, no int(None) risk. Artefactos: reports/p57_none/{summary,decision}.json; commits H7-H9 (cf4b70d P5.7a / d900bf1 P5.7b / 9063a58 reports). Full-breadth `top_key=None` = opt-in P5.7b (kwarg validado); default productivo **V5.1+B2 `top_key=20` INTACTO** (1.2472/4/4).
 - **Repo**: `git init` + push a github.com/alexpm88/volatility_model (master=c12fa5b, 4 commits, 101 files); reports/p56_topk corregido (ADOPT→opt-in + caveat reproducibility); `/tmp/cline/recover_backtrader.sh` = one-command rescue tras restaurar el drive.
+- **P5.8 [COMPLETADO — 11-Oct]**: Holdout 3-fold OOS full-breadth (`top_k=None@40syms`) usando 10y datos (2514 dias, 2016-2026). Walk-forward 3-fold (train=630, OOS=628). **In-sample 10y Sharpe 0.8977** (vs P5.6/P5.7 5y Sharpe 1.3435 — inflado por bull market). Placebo p90 (top_k=20 aleatorio) = 1.0661 > 0.8977. OOS folds: Fold 1 (2019-2021, COVID) Sharpe 0.7124 MDD -26.14%; Fold 2 (2021-2024) Sharpe 0.9554 MDD -11.24%; Fold 3 (2024-2026) Sharpe 1.3532 MDD -12.72%. OOS avg 1.0070 (min 0.7124). **Gates 2/5**: ✅ Sharpe promedio positivo, ✅ todos Sharpe > 0; ❌ MDD -25% (Fold 1 COVID), ❌ OOS no supera placebo p90 en ningún fold, ❌ min OOS < 90% del in-sample 5y (1.3435). **Decisión: SUSPECT_OVERFIT** (overfit a bull market 2021-2026). Full-breadth no supera el placebo → alpha = volatility SIGNAL (inverse-vol + vol targeting), no de ranking/breadth. **V5.1+B2 `top_key=20` INTACTO** (1.2472/4/4); full-breadth = opt-in P5.7b, NO default. Artefactos: `reports/p58_holdout/{summary,decision}.json`; `portfolio_engine/p58_holdout.py` (runtime harness); cache `universe_40_10y.pkl`.
+
+---
+
+## 18. P5.9 Volume-Price Accumulation/Distribution Regime Features (11-Oct 2026)
+
+- **Objetivo**: Detectar regimes de acumulación/distribución basados en dinámica volumen-precio; integrar scoring per-asset en el ranking y trigger de régimen en el backtester.
+- **Features nuevas en `signals.py`** (`compute_asset_features`):
+  - `lv`: $\ln(V_t / V_{t-1})$ (causal, shift(1)).
+  - `volume_zscore_21`: z-score de 21d; detecta spikes (>1.5σ) o dried-up (<<0).
+  - `vol_price_corr_21`: correlación 21d (min 14) retornos↔cambios volumen; +: tendencia confirmada; -: divergencia.
+  - `acc_dist_score`: $\text{sign}(r_t) \cdot \text{sign}(lv_t) \cdot |r_t| \cdot \max(0, z_{V,21})$.
+- **Composite Score** (`rank_and_select_top_k`): peso 0.10 en acc_dist_score; pesos anteriores escalados 10% proporcionalmente (0.315/0.270/0.180/0.135).
+- **Trigger `acc_dist`** (`backtester.py` `_in_bear_regime`): Distribution = price < MA(regime_window) + volume > avg + k*std → cash. Accumulation = price ≥ MA + volume > avg + k*std → stay invested. Proxy cross-sectional median (o `regime_series`/`regime_volume_series`).
+- **Bug fix**: `validation.py` `run_sensitivity` filtra `top_k`/`target_vol`/`rebalance_freq` de `**kw` antes de forward a `PortfolioBacktester` (evita `TypeError: multiple values for keyword argument`).
+- **Smoke tests** (25 syms, 5y cache):
+  - acc_dist regime (k=1.0): Sharpe **1.0277**, CAGR 9.44%, MDD -11.11%, 46 rebalanceos, avg 8.0 pos.
+  - Baseline (regime_filter=False): Sharpe **1.0595** (backward compatible).
+  - run_sensitivity: bug fix confirmado, 1 resultado retornado sin error.
