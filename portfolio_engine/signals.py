@@ -82,7 +82,7 @@ def rank_and_select_top_k(df, current_date, top_k=20, min_history=126):
     
     # Validar que tengan datos suficientes
     valid = sub.dropna(subset=["mom_sharpe63", "rv63", "div_yield", "trend_ratio"]).copy()
-    if len(valid) < top_k:
+    if top_k is None or len(valid) < top_k:   # P5.7: None => full-breadth (todos valid)
         # Si hay menos, tomar los que haya
         top_k = len(valid)
         

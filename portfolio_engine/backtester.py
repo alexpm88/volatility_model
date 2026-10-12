@@ -97,10 +97,7 @@ class PortfolioBacktester:
         Devuelve (pesos, vol_de_cartera_estimada, apalancamiento_aplicado)."""
         if self._in_bear_regime(date):
             return pd.Series(dtype=float), float("nan"), 0.0   # régimen bajista => cash
-        if self.top_k is not None:
-            names = rank_and_select_top_k(self.df, date, top_k=self.top_k, min_history=self.min_history)
-        else:
-            names = list(self.symbols)   # full-breadth (sin truncar) - P5.7 opt-in
+        names = rank_and_select_top_k(self.df, date, top_k=self.top_k, min_history=self.min_history)
         if not names:
             return pd.Series(dtype=float), float("nan"), 0.0
         rv = self.df.xs(date, level="date")["rv63"].reindex(names).dropna()
