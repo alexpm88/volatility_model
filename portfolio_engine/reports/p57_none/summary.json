@@ -1,0 +1,15 @@
+{
+  "top_key": "None",
+  "univ": 40,
+  "breadth": "full",
+  "sharpe": 1.343495,
+  "cagr": 0.1219,
+  "mdd": -0.1278,
+  "gates": "4/4",
+  "placebo_sharpe_p90": 1.0298,
+  "folds_sharpe_min": 0.9353,
+  "vs_baseline": true,
+  "baseline_sharpe": 1.24722657984619,
+  "t_sec": 44.4,
+  "note": "P5.7 re-validation: top_key=None@40syms == top_key=40@40 (full-breadth). backtester.py tracked+readable (phantom typo resolved; no data-loss)."
+}

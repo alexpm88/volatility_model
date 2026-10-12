@@ -1,0 +1,7 @@
+{
+  "decision": "ADOPT top_key=None (full-breadth) opt-in P5.7b default",
+  "sharpe": 1.343495,
+  "gates": "4/4",
+  "vs_baseline": true,
+  "note": "== P5.6 top_key=40@40 ceiling. Validated (Design B None-safe rank_and_select_top_key signals.py L85). list(self.symbols) guard was divergent 1.0298."
+}
