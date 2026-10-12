@@ -26,7 +26,7 @@ from .signals import compute_asset_features, rank_and_select_top_k
 
 
 class PortfolioBacktester:
-    def __init__(self, panel, initial_capital=100000.0, commission_bps=5.0, top_k=20,
+    def __init__(self, panel, initial_capital=100000.0, commission_bps=5.0, top_k=None,
                  rebalance_freq=21, target_vol=0.10, max_stock_weight=0.08,
                                                                     slippage_bps=0.0, max_leverage=1.0, vol_lookback=63, min_history=126,
                  regime_filter=False, regime_window=200, regime_series=None,
@@ -34,7 +34,7 @@ class PortfolioBacktester:
         self.raw_panel = panel
         self.initial_capital = float(initial_capital)
         self.commission_rate = (float(commission_bps) + float(slippage_bps)) / 10000.0
-        self.top_k = int(top_k)
+        self.top_k = None if top_k is None else int(top_k)   # P5.7: None = full-breadth (sin truncar)
         self.rebalance_freq = int(rebalance_freq)
         self.target_vol = float(target_vol)
         self.max_stock_weight = float(max_stock_weight)
@@ -97,7 +97,10 @@ class PortfolioBacktester:
         Devuelve (pesos, vol_de_cartera_estimada, apalancamiento_aplicado)."""
         if self._in_bear_regime(date):
             return pd.Series(dtype=float), float("nan"), 0.0   # régimen bajista => cash
-        names = rank_and_select_top_k(self.df, date, top_k=self.top_k, min_history=self.min_history)
+        if self.top_k is not None:
+            names = rank_and_select_top_k(self.df, date, top_k=self.top_k, min_history=self.min_history)
+        else:
+            names = list(self.symbols)   # full-breadth (sin truncar) - P5.7 opt-in
         if not names:
             return pd.Series(dtype=float), float("nan"), 0.0
         rv = self.df.xs(date, level="date")["rv63"].reindex(names).dropna()
