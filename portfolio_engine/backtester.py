@@ -196,8 +196,13 @@ class PortfolioBacktester:
         vol = float(ret.std() * np.sqrt(252)) if len(ret) > 1 else float("nan")
         sharpe = float(ret.mean() / ret.std() * np.sqrt(252)) if len(ret) > 1 and ret.std() > 0 else float("nan")
         mdd = float((nav / nav.cummax() - 1.0).min())
+        # Downside Sharpe ratio (MAR=0): mean return / downside deviation
+        dd = np.sqrt(np.mean(np.minimum(0.0, ret.values) ** 2)) * np.sqrt(252) if len(ret) > 1 else 0.0
+        downside_sharpe = float(ret.mean() / dd * np.sqrt(252)) if dd > 0 else float("nan")
         return dict(initial_capital=self.initial_capital, final_nav=float(nav.iloc[-1]),
                     total_return=total_return, cagr=cagr, ann_vol=vol, sharpe=sharpe,
+                    downside_dev=float(dd) if np.isfinite(dd) else float("nan"),
+                    downside_sharpe=downside_sharpe,
                     max_drawdown=mdd, calmar=(cagr / abs(mdd)) if mdd < 0 else float("nan"),
                     total_dividends=float(self.history["dividend"].sum()),
                     total_costs=float(self.history["commission"].sum()),

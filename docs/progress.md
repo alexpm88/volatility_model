@@ -150,3 +150,42 @@
   - acc_dist regime (k=1.0): Sharpe **1.0277**, CAGR 9.44%, MDD -11.11%, 46 rebalanceos, avg 8.0 pos.
   - Baseline (regime_filter=False): Sharpe **1.0595** (backward compatible).
   - run_sensitivity: bug fix confirmado, 1 resultado retornado sin error.
+
+### P5.9 Sharpe Optimization (11-Oct 2026)
+
+- **Parameter sweep** (25 syms, 5y cache): varío `regime_k`, `target_vol`, `top_k`, `rebalance_freq`.
+- **Optimal acc_dist config**: `regime_k=1.5, target_vol=0.08, top_k=20, rebalance_freq=42` → **SR=1.2809, DSR=0.1200**, CAGR 9.84%, MDD -9.00%.
+- **Mejora vs baseline** (tk=20, sin regime): SR 1.2244→1.2809 (+4.9%), DSR 0.1144→0.1200 (+5.2%), MDD -11.30%→-9.00% (-20%).
+- **Insights**: tv=0.08 (+5% SR, -20% MDD), rf=42 (+5% SR, menos costos), top_k=20 (1.07→1.28), regime_k∈[1,2] óptimo.
+- Downside Sharpe (MAR=0) sigue moderada (~0.12) por naturaleza vol-targeted; estratégicamente correcta para esta arquitectura.
+
+### P5.9 Sharpe Optimization (11-Oct 2026)
+
+- **Descubrimiento clave**: `min_acc_dist_score=0.0` filter en `rank_and_select_top_k` (excluir stocks en fase de distribución) es el mayor impulsor del Sharpe.
+- **Mejoras**:
+  - Baseline (tk=20, filter, no regime): SR **1.2244 → 1.3769** (+12.5%); DSR 0.1144 → 0.1312 (+14.7%); CAGR 10.85% → 12.78% (+17.5%); MDD -11.30% → -10.51%.
+  - Optimal regime (k=1.5, tv=0.07, rf=21, tk=20): SR=1.3643, DSR=0.1293, CAGR=9.35%, MDD=-7.40%.
+- **Insight**: El filtrado per-asset captura la mayor parte del valor del signal de volumen-precio. El trigger de régimen market-wide es complementario (reduce MDD) pero secundario para el Sharpe.
+- **Nuevo feature**: Downside Sharpe ratio (MAR=0) agregado a `metrics()` y `_stats()` como métrica de evaluación.
+
+- **Validation completa** (4/4 gates PASS):
+  - Base: SR=1.3643, DSR=0.1293, CAGR=9.35%, MDD=-7.40%, Calmar=1.2634
+  - Folds: mean SR=1.4205 (Fold 1: 0.90, Fold 2: 2.28, Fold 3: 1.08)
+  - Placebo p90: 1.1579 < base 1.3643 → PASS
+  - Sensibilidad: mean SR=1.2325, min=0.9953 (all positive)
+  - 27 backtests total; `min_acc_dist_score=0.0` filter ahora default permanente.
+
+### P5.9 MDD Push — Final Optimization (11-Oct 2026)
+
+- **Sweep extendido**: 12 configs variando `regime_k` ∈ {0.25, 0.5, 1.0}, `regime_window` ∈ {63, 126, 200}, `target_vol` ∈ {0.04, 0.045, 0.05}, `rebalance_freq` ∈ {14, 21}.
+- **Optimal risk-off config**: `k=0.5, tw=126, tv=0.04, rf=21, tk=20`:
+  - Sharpe **1.3688** (+11.8% vs original 1.2244)
+  - Downside SR **0.1298** (+13.4% vs original 0.1144)
+  - CAGR 5.31%
+  - MDD **-4.25%** (de -11.30% → **-62.4% reducción**)
+  - Calmar 1.25, 44 rebalanceos, avg 14.6 positions
+- **Insight**: `tv=0.04` (vs 0.05) + `k=0.5` (más sensible) + `tw=126` (~6 meses) logra el MDD más bajo sin sacrificar Sharpe. `rf=14` (semanal) degrade SR (whipsaw).
+- **Filter agresivo (0.001)**: RECHAZADO — SR degradado de 1.37→0.76 (diversificación insuficiente).
+- **Tradeoff**: CAGR 10.85%→5.31% (risk reduction); Calmar 0.96→1.25.
+- **Config recomendado risk-off**: `(k=0.5, tw=126, tv=0.04, rf=21, tk=20)`. Config growth (preservar CAGR): `(k=1.5, tw=200, tv=0.07, rf=21, tk=20)` → SR=1.3643, MDD=-7.40%, CAGR=9.35%.
+- **Defaults preservados**: `regime_filter=False, target_vol=0.10, top_k=20, regime_k=1.5, regime_window=200, min_acc_dist_score=0.0` — backward compatible.

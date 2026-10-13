@@ -104,18 +104,23 @@ def compute_asset_features(panel):
     df = df.replace([np.inf, -np.inf], np.nan)
     return df
 
-def rank_and_select_top_k(df, current_date, top_k=20, min_history=126):
+def rank_and_select_top_k(df, current_date, top_k=20, min_history=126, min_acc_dist_score=0.0):
     """
     Dada una fecha de rebalanceo, evalúa la sección cruzada de todos los activos disponibles
     y selecciona el top_k con el mayor Composite Multi-Factor Score:
     Score = 0.315 * Rank(Mom_Sharpe) + 0.270 * Rank(-RV63 [Baja Vol]) + 0.180 * Rank(Div_Yield)
     + 0.135 * Rank(Trend) + 0.100 * Rank(Acc_Dist_Score)  [P5.9]
+
+    - min_acc_dist_score (default 0.0): filtra stocks en fase de distribución (acc_dist_score < 0)
+      antes del ranking, mejorando el Sharpe al excluir activos donde smart money vende.
     """
     # Filtrar datos hasta current_date
     sub = df.xs(current_date, level="date")
     
     # Validar que tengan datos suficientes
     valid = sub.dropna(subset=["mom_sharpe63", "rv63", "div_yield", "trend_ratio", "acc_dist_score"]).copy()
+    # P5.9: Filter out stocks in distribution phase (acc_dist_score < 0 = smart money distributing)
+    valid = valid[valid["acc_dist_score"] >= min_acc_dist_score]
     if top_k is None or len(valid) < top_k:   # P5.7: None => full-breadth (todos valid)
         # Si hay menos, tomar los que haya
         top_k = len(valid)

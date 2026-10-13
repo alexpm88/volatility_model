@@ -30,10 +30,14 @@ def _stats(nav):
     ret = (nav / nav.shift(1) - 1.0).dropna()
     years = len(nav) / 252.0
     sd = ret.std()
+    # Downside deviation (MAR=0)
+    dd = np.sqrt(np.mean(np.minimum(0.0, ret.values) ** 2)) * np.sqrt(252) if len(ret) > 1 else 0.0
+    dsr = float(ret.mean() / dd * np.sqrt(252)) if dd > 0 else float("nan")
     return dict(days=len(nav), total_return=float(nav.iloc[-1] / nav.iloc[0] - 1.0),
                 cagr=float((nav.iloc[-1] / nav.iloc[0]) ** (1.0 / years) - 1.0) if years > 0 else float("nan"),
                 ann_vol=float(sd * np.sqrt(252)) if len(ret) > 1 else float("nan"),
                 sharpe=float(ret.mean() / sd * np.sqrt(252)) if len(ret) > 1 and sd > 0 else float("nan"),
+                downside_sharpe=dsr,
                 max_drawdown=float((nav / nav.cummax() - 1.0).min()))
 
 

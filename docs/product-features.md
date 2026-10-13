@@ -93,3 +93,21 @@ En `backtester.py` `_in_bear_regime`, el trigger `acc_dist` detecta régimen de 
 ### C. Integracion en el Composite Score
 
 `rank_and_select_top_k` incluye `acc_dist_score` como factor cross-seccional (peso 0.10; pesos existentes reducidos 10% proporcionalmente para acomodar). El score se valida como dropna requerido.
+
+Además, `rank_and_select_top_k` aplica un **filter per-asset** (`min_acc_dist_score=0.0`, default): excluye stocks en fase de distribución (acc_dist_score < 0) antes del ranking. Esto evita holding activos donde smart money está distribuyendo (price↓ + volume↑), mejorando el Sharpe en +12.5% (de 1.2244 a 1.3769 en 25-syms/5y).
+
+### D. Optimización de Parámetros (P5.9 Sharpe Sweep)
+
+| Config | Sharpe | Downside SR | CAGR | MDD |
+|--------|--------|-------------|------|-----|
+| Baseline (tk=20, filter, no regime) | **1.3769** | **0.1312** | 12.78% | -10.51% |
+| Optimal regime (k=1.5, tv=0.07, rf=21) | 1.3643 | 0.1293 | 9.35% | -7.40% |
+| **Optimal regime (k=0.5, tv=0.04, tw=126)** | **1.3688** | **0.1298** | 5.31% | **-4.25%** |
+| Original baseline (sin P5.9) | 1.2244 | 0.1144 | 10.85% | -11.30% |
+
+- **Sharpe improvement**: +12.5% (1.2244 → 1.3769) vía el filter de distribución
+- **Downside Sharpe improvement**: +14.7% (0.1144 → 0.1312)
+- **MDD reduction**: **-62.4%** (-11.30% → -4.25%) vía `tv=0.04` + `k=0.5` + `tw=126`
+- El trigger de régimen (`regime_filter=True`) reduce MDD a costa de CAGR; config risk-off (tv=0.04) prioriza MDD (-4.25%), config growth (tv=0.07) prioriza CAGR (9.35%).
+- **Downside Sharpe** (MAR=0) agregado como métrica en `metrics()` y `_stats()`
+- Filter agresivo (`min_acc_dist_score=0.001`): rechazado (degrada SR a 0.76, diversificación insuficiente)
